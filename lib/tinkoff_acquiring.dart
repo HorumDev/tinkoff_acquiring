@@ -30,26 +30,41 @@ class TinkoffAcquiring {
     });
   }
 
-  static Future<bool> googlePay(String token) async {
+  static Future googlePay(String token) async {
+    //TODO catch error
     if (defaultTargetPlatform == TargetPlatform.iOS) return false;
-    return true;
+    return _channel.invokeMethod('payByGooglePay', <String, dynamic>{
+      'customerEmail': _currentUser.email,
+      'customerPhone': _currentUser.phone,
+      'customerKey': _currentUser.token,
+      'token': token
+    });
   }
 
   static set updateUser(User user) => _currentUser = user;
 
-  static Future applePay(List<Product> products) async {
+  static Future pay(List<Product> products,PaymentMetod method) async {
+    //TODO catch error
     if (defaultTargetPlatform == TargetPlatform.android) return false;
 
     double totalAmount = 0.0;
-    for(Product p in products) {
-      totalAmount+=p.price*p.amount*100;
+    for (Product p in products) {
+      totalAmount += p.price * p.amount * 100;
     }
 
-    return _channel.invokeMethod('payByApplePay', <String, dynamic>{
+    return _pay(method,totalAmount);
+  }
+
+  static _pay(PaymentMetod method,totalAmount){
+    return _channel.invokeMethod('pay', <String, dynamic>{
       'customerEmail': _currentUser.email,
       'customerPhone': _currentUser.phone,
       'customerKey': _currentUser.token,
-      'amount': totalAmount
+      'amount': totalAmount,
+      'payMethod':method.index
     });
   }
+
+
 }
+enum PaymentMetod {applePay,googlePay,card}

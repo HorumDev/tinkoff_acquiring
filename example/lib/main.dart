@@ -19,6 +19,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
+  
+  String errorMessage = 'error';
 
   @override
   void initState() {
@@ -55,9 +57,7 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Column(
-
-            children: [
+        body: Column(children: [
           Text('Running on: $_platformVersion\n'),
           ElevatedButton(
               onPressed: () => TinkoffAcquiring.initSdk(
@@ -67,16 +67,34 @@ class _MyAppState extends State<MyApp> {
               child: const Text('init Tinkoff')),
           ElevatedButton(
               onPressed: () {
-                TinkoffAcquiring.updateUser = User(token: 'fgergreg',email: 'example.com',phone: '+79217483843');
+                TinkoffAcquiring.updateUser = User(
+                    token: 'fgergreg',
+                    email: 'example.com',
+                    phone: '+79217483843');
 
-                TinkoffAcquiring.applePay(
-                  [
-                    Product(name: 'pizza', amount: 2, price: 213.11),
-                    Product(name: 'pasta', amount: 1, price: 210),
-                    Product(name: 'sushi', amount: 4, price: 99.99),
-
-                  ]);},
+                TinkoffAcquiring.pay([
+                  Product(name: 'pizza', amount: 2, price: 213.11),
+                  Product(name: 'pasta', amount: 1, price: 210),
+                  Product(name: 'sushi', amount: 4, price: 99.99),
+                ], PaymentMetod.applePay);
+              },
               child: const Text('pay apple pay')),
+          ElevatedButton(
+              onPressed: () {
+                TinkoffAcquiring.updateUser = User(
+                    token: 'fgergreg',
+                    email: 'example.com',
+                    phone: '+79217483843');
+
+                TinkoffAcquiring.pay([
+                  Product(name: 'pizza', amount: 2, price: 213.11),
+                  Product(name: 'pasta', amount: 1, price: 210),
+                  Product(name: 'sushi', amount: 4, price: 99.99),
+                ], PaymentMetod.card).then((value) => setState(()=>errorMessage=value));
+              },
+              child: const Text('pay card')),
+
+          Text(errorMessage)
         ]),
       ),
     );

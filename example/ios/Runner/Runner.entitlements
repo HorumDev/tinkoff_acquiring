@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.developer.in-app-payments</key>
 	<array>
-		<string>merchant.tinkoff.test</string>
+		<string>merchant.ru.mandarineda.mandarinapp.pay</string>
 	</array>
 </dict>
 </plist>
