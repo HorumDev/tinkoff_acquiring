@@ -28,21 +28,24 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
             if(sdk.canMakePaymentsApplePay(with: paymentApplePayConfiguration)){
                 let params = call.arguments as! [String: Any]
                 
-                amount=params["amount"] as? Double
+                amount=params["amount"] as! Double
                 //  customerEmail = call.arguments["customerEmail"]
                 // customerPhone = call.arguments["customerPhone"]
-                customerKey = params["customerKey"] as? String
+                customerKey = params["customerKey"] as! String
                 
                 print(params["payMethod"])
+                
+                var paymentData = createPaymentData()
+                //TODO add description from flutter
+                paymentData.description = "mandarin foods"
                 
                 switch params["payMethod"] as? NSNumber{
                 case 0:
                     paymentApplePayConfiguration = AcquiringUISDK.ApplePayConfiguration()
+                    paymentApplePayConfiguration.merchantIdentifier =   params["merchant"] as! String
                     sdk.presentPaymentApplePay(
-                        //on: self.window!.rootViewController!,
                         on: UIApplication.shared.keyWindow!.rootViewController!,
-                        //on: FlutterViewController(),
-                        paymentData: createPaymentData(),
+                        paymentData: paymentData,
                         viewConfiguration: AcquiringViewConfiguration(),
                         paymentConfiguration: paymentApplePayConfiguration)
                     {  response in
@@ -51,17 +54,14 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
                     }
                     
                 case 2:
-                    var paymentData = createPaymentData()
+                
                     paymentData.savingAsParentPayment = true
                     
-                    //presentPaymentView(paymentData: paymentData, viewConfigration: acquiringViewConfiguration())
+                    
                     sdk.presentPaymentView(
-                        //on: self.window!.rootViewController!,
                         on: UIApplication.shared.keyWindow!.rootViewController!,
-                        //on: FlutterViewController(),
                         paymentData: paymentData,
                         configuration: AcquiringViewConfiguration()
-                        // paymentConfiguration: paymentApplePayConfiguration
                     )
                     {  response in
                         //result(response)
@@ -85,7 +85,7 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
             let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
             // включаем логи, результаты работы запросов пишутся в консоль
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
-            sdk =  try? AcquiringUISDK(configuration: acquiringSDKConfiguration)
+            sdk =  try? AcquiringUISDK(configuration: acquiringSDKConfiguration )
             print("initSdk done")
             print(sdk)
             result(true)
@@ -106,7 +106,7 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
         //  let amount = productsAmount()
         let randomOrderId = String(Int64(arc4random()))
         var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount ?? 0), orderId: randomOrderId, customerKey: customerKey)
-        paymentData.description = "мандарин фудс"
+        
         
         //          var receiptItems: [Item] = []
         //          products.forEach { product in

@@ -1,5 +1,6 @@
 class User {
   final String email, phone, token;
+  final String? merchant;
 
-  User({required this.email, required this.phone, required this.token});
+  User({this.merchant, required this.email, required this.phone, required this.token});
 }

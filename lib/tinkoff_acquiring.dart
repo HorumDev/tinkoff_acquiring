@@ -49,7 +49,7 @@ class TinkoffAcquiring {
 
     double totalAmount = 0.0;
     for (Product p in products) {
-      totalAmount += p.price * p.amount * 100;
+      totalAmount += p.price * p.amount;
     }
 
     return _pay(method,totalAmount);
@@ -61,7 +61,8 @@ class TinkoffAcquiring {
       'customerPhone': _currentUser.phone,
       'customerKey': _currentUser.token,
       'amount': totalAmount,
-      'payMethod':method.index
+      'payMethod':method.index,
+      'merchant':_currentUser.merchant
     });
   }
 
