@@ -4,12 +4,10 @@ import TinkoffASDKCore
 import TinkoffASDKUI
 
 public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
-    public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "tinkoff_acquiring", binaryMessenger: registrar.messenger())
-        let instance = SwiftTinkoffAcquiringPlugin()
-        registrar.addMethodCallDelegate(instance, channel: channel)
-        //registrar.addApplicationDelegate(instance)
-    }
+    
+    
+    var window: UIWindow?
+    var controller: UIViewController!
     
     lazy var paymentApplePayConfiguration = AcquiringUISDK.ApplePayConfiguration()
     //var products: [Product] = []
@@ -19,16 +17,32 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
     var customerPhone: String?
     var customerKey: String?
     
+    public static func register(with registrar: FlutterPluginRegistrar) {
+        let channel = FlutterMethodChannel(name: "tinkoff_acquiring", binaryMessenger: registrar.messenger())
+        let instance = SwiftTinkoffAcquiringPlugin()
+        registrar.addMethodCallDelegate(instance, channel: channel)
+        //registrar.addApplicationDelegate(instance)
+//        window = UIApplication.shared.window
+//        controller = UIApplication.shared.keyWindow!.rootViewController as! UIViewController
+    }
+    
+   
+    
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        //window = UIApplication.shared.window
+        controller = UIApplication.shared.keyWindow!.rootViewController as! UIViewController
+   
         switch call.method {
         case "getPlatformVersion":
             result("iOS " + UIDevice.current.systemVersion)
+        case "canMakePayments":
+            result(sdk.canMakePaymentsApplePay(with: paymentApplePayConfiguration))
         case "pay":
             print("pay swift")
             if(sdk.canMakePaymentsApplePay(with: paymentApplePayConfiguration)){
                 let params = call.arguments as! [String: Any]
                 
-                amount=params["amount"] as! Double
+                amount=params["Amount"] as! Double
                 //  customerEmail = call.arguments["customerEmail"]
                 // customerPhone = call.arguments["customerPhone"]
                 customerKey = params["customerKey"] as! String
@@ -36,8 +50,8 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
                 print(params["payMethod"])
                 
                 var paymentData = createPaymentData()
-                //TODO add description from flutter
-                paymentData.description = "mandarin foods"
+                
+                paymentData.description = params["description"] as? String
                 
                 switch params["payMethod"] as? NSNumber{
                 case 0:
@@ -54,8 +68,8 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
                     }
                     
                 case 2:
-                
-                    paymentData.savingAsParentPayment = true
+                    
+                    //paymentData.savingAsParentPayment = true
                     
                     
                     sdk.presentPaymentView(
@@ -82,7 +96,14 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
             // терминал и пароль
             let credentional = AcquiringSdkCredential(terminalKey: params["terminalKey"] as! String, password: params["terminalPassword"] as! String, publicKey: params["publicKey"] as! String)
             // конфигурация для старта sdk
-            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional)
+            var id = params["env"] as! Int
+            var env: AcquiringSdkEnvironment
+            
+            if( id == 0){
+                env = AcquiringSdkEnvironment.test
+            }else{
+                env = AcquiringSdkEnvironment.prod}
+            let acquiringSDKConfiguration = AcquiringSdkConfiguration(credential: credentional, server: env)
             // включаем логи, результаты работы запросов пишутся в консоль
             acquiringSDKConfiguration.logger = AcquiringLoggerDefault()
             sdk =  try? AcquiringUISDK(configuration: acquiringSDKConfiguration )
@@ -96,12 +117,12 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    //     var window: UIWindow?
     
     
     
     
-   
+    
+    
     private func createPaymentData() -> PaymentInitData {
         //  let amount = productsAmount()
         let randomOrderId = String(Int64(arc4random()))
@@ -129,14 +150,18 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
         
         return paymentData
     }
-   
+    
     
     private func responseReviewing(_ response: Result<PaymentStatusResponse, Error>,_ flutterResult: @escaping FlutterResult) {
+        
+        UIApplication.shared.keyWindow!.rootViewController = controller as! UIViewController
+        UIApplication.shared.keyWindow!.makeKeyAndVisible()
+        
         switch response {
         case let .success(result):
             print("result")
             print(result)
-            flutterResult(result.success)
+            flutterResult( try? JSONEncoder().encode(result))
         case let .failure(error):
             print("error")
             print(error)

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
+// import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+// import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/services.dart';
 import 'package:tinkoff_acquiring/tinkoff_acquiring.dart';
-import 'package:tinkoff_acquiring/wrappers/product.dart';
-import 'package:tinkoff_acquiring/wrappers/user.dart';
+import 'package:tinkoff_acquiring/widgets/ios/info_dialog.dart';
+import 'package:tinkoff_acquiring/wrappers/data/product.dart';
+import 'package:tinkoff_acquiring/wrappers/data/user.dart';
 
 void main() {
   runApp(const MyApp());
@@ -53,6 +55,16 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: [
+        // AppLocalizations.delegate,
+        // GlobalMaterialLocalizations.delegate,
+        // GlobalWidgetsLocalizations.delegate,
+        // GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ru'),
+      ],
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
@@ -61,9 +73,9 @@ class _MyAppState extends State<MyApp> {
           Text('Running on: $_platformVersion\n'),
           ElevatedButton(
               onPressed: () => TinkoffAcquiring.initSdk(
-                  '1585906902098',
-                  'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv5yse9ka3ZQE0feuGtemYv3IqOlLck8zHUM7lTr0za6lXTszRSXfUO7jMb+L5C7e2QNFs+7sIX2OQJ6a+HG8kr+jwJ4tS3cVsWtd9NXpsU40PE4MeNr5RqiNXjcDxA+L4OsEm/BlyFOEOh2epGyYUd5/iO3OiQFRNicomT2saQYAeqIwuELPs1XpLk9HLx5qPbm8fRrQhjeUD5TLO8b+4yCnObe8vy/BMUwBfq+ieWADIjwWCMp2KTpMGLz48qnaD9kdrYJ0iyHqzb2mkDhdIzkim24A3lWoYitJCBrrB2xM05sm9+OdCI1f7nPNJbl5URHobSwR94IRGT7CJcUjvwIDAQAB',
-                  '2gat6poci9q3edms'),
+                  terminalKey: '1585906902098',
+                  publicKey: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAv5yse9ka3ZQE0feuGtemYv3IqOlLck8zHUM7lTr0za6lXTszRSXfUO7jMb+L5C7e2QNFs+7sIX2OQJ6a+HG8kr+jwJ4tS3cVsWtd9NXpsU40PE4MeNr5RqiNXjcDxA+L4OsEm/BlyFOEOh2epGyYUd5/iO3OiQFRNicomT2saQYAeqIwuELPs1XpLk9HLx5qPbm8fRrQhjeUD5TLO8b+4yCnObe8vy/BMUwBfq+ieWADIjwWCMp2KTpMGLz48qnaD9kdrYJ0iyHqzb2mkDhdIzkim24A3lWoYitJCBrrB2xM05sm9+OdCI1f7nPNJbl5URHobSwR94IRGT7CJcUjvwIDAQAB',
+                  terminalPassword: '2gat6poci9q3edms'),
               child: const Text('init Tinkoff')),
           ElevatedButton(
               onPressed: () {
@@ -77,7 +89,7 @@ class _MyAppState extends State<MyApp> {
                   Product(name: 'pizza', amount: 2, price: 213.11),
                   Product(name: 'pasta', amount: 1, price: 210),
                   Product(name: 'sushi', amount: 4, price: 99.99),
-                ], PaymentMetod.applePay);
+                ], PaymentMetod.applePay).then((value) => showInfoDialog(context,value));
               },
               child: const Text('pay apple pay')),
           ElevatedButton(
@@ -92,10 +104,20 @@ class _MyAppState extends State<MyApp> {
                   Product(name: 'pasta', amount: 1, price: 210),
                   Product(name: 'sushi', amount: 4, price: 99.99),
                 ], PaymentMetod.card)
-                    .then((value) => setState(() => errorMessage = value));
+                    .then((value) => showInfoDialog(context,value));
               },
               child: const Text('pay card')),
-          Text(errorMessage)
+          Text(errorMessage),
+          ElevatedButton(onPressed: ()=>showDialog(
+              context: context,
+              builder: (context) => Dialog(child: Container(
+                  padding: EdgeInsets.all(16),
+                  decoration: ShapeDecoration(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(26)
+                      )
+                  ),
+                  child: Text('OK')))), child: const Text('show dialog'))
         ]),
       ),
     );
