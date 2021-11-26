@@ -21,6 +21,7 @@ class TinkoffAcquiring {
   static initSdk(
       {required String terminalKey,
       required String publicKey,
+        //only required for ios
       String? terminalPassword,
       ServerEnvironment env = ServerEnvironment.test}) async {
     if (defaultTargetPlatform == TargetPlatform.iOS &&
@@ -37,6 +38,7 @@ class TinkoffAcquiring {
     return _sdkInited;
   }
 
+  //TODO google pay
   static Future<bool> canUseAppleOrGooglePay() async {
     if (!_sdkInited) throw AssertionError('sdk not inited');
     return (await _channel.invokeMethod('canMakePayments')) as bool;

@@ -85,11 +85,7 @@ class _MyAppState extends State<MyApp> {
                     phone: '+79217483843',
                     merchant: 'merchant.ru.mandarineda.mandarinapp.pay');
 
-                TinkoffAcquiring.pay([
-                  Product(name: 'pizza', amount: 2, price: 213.11),
-                  Product(name: 'pasta', amount: 1, price: 210),
-                  Product(name: 'sushi', amount: 4, price: 99.99),
-                ], PaymentMetod.applePay).then((value) => showInfoDialog(context,value));
+                TinkoffAcquiring.pay(100.0, PaymentMetod.applePay).then((value) => showInfoDialog(context,value));
               },
               child: const Text('pay apple pay')),
           ElevatedButton(
@@ -99,11 +95,7 @@ class _MyAppState extends State<MyApp> {
                     email: 'example.com',
                     phone: '+79217483843');
 
-                TinkoffAcquiring.pay([
-                  Product(name: 'pizza', amount: 2, price: 213.11),
-                  Product(name: 'pasta', amount: 1, price: 210),
-                  Product(name: 'sushi', amount: 4, price: 99.99),
-                ], PaymentMetod.card)
+                TinkoffAcquiring.pay(101.0, PaymentMetod.card)
                     .then((value) => showInfoDialog(context,value));
               },
               child: const Text('pay card')),
