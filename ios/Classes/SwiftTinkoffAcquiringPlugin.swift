@@ -161,11 +161,13 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
         case let .success(result):
             print("result")
             print(result)
-            flutterResult( try? JSONEncoder().encode(result))
+            flutterResult( try?String(data: JSONEncoder().encode(result), encoding: String.Encoding.utf8) )
+            //flutterResult(try? result.encode(to: JSONEncoder() as! Encoder) )
         case let .failure(error):
             print("error")
             print(error)
-            flutterResult(error.localizedDescription)
+            //flutterResult(error.localizedDescription)
+            flutterResult( try?String(data: JSONEncoder().encode(error), encoding: String.Encoding.utf8) )
         }
     }
     

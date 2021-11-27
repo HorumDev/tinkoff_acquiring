@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:tinkoff_acquiring/widgets/android/payment_result.dart';
+import 'package:tinkoff_acquiring/widgets/ios/response_decode.dart';
 import 'package:tinkoff_acquiring/wrappers/data/coding_keys.dart';
 import 'package:tinkoff_acquiring/wrappers/data/product.dart';
 import 'package:tinkoff_acquiring/wrappers/data/user.dart';
@@ -10,6 +13,8 @@ import 'package:tinkoff_acquiring/wrappers/data/user.dart';
 class TinkoffAcquiring {
   static late User _currentUser;
   static bool _sdkInited = false;
+
+  static Stream? paymentProcessStream;
 
   static const MethodChannel _channel = MethodChannel('tinkoff_acquiring');
 
@@ -21,7 +26,7 @@ class TinkoffAcquiring {
   static initSdk(
       {required String terminalKey,
       required String publicKey,
-        //only required for ios
+      //only required for ios
       String? terminalPassword,
       ServerEnvironment env = ServerEnvironment.test}) async {
     if (defaultTargetPlatform == TargetPlatform.iOS &&
@@ -86,6 +91,11 @@ class TinkoffAcquiring {
 
     print('payResult');
     print(payResult);
+    if (defaultTargetPlatform == TargetPlatform.android)
+      return checkAndroidPayResult(payResult);
+    if (defaultTargetPlatform == TargetPlatform.iOS)
+      return iosResponseDecode(payResult);
+
     return payResult is String ? payResult : payResult.toString();
   }
 }

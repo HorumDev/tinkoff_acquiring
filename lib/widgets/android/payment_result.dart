@@ -1,0 +1,5 @@
+
+
+checkAndroidPayResult(result){
+
+}
