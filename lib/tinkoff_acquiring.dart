@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:tinkoff_acquiring/widgets/android/payment_result.dart';
 import 'package:tinkoff_acquiring/widgets/ios/response_decode.dart';
 import 'package:tinkoff_acquiring/wrappers/data/coding_keys.dart';
+import 'package:tinkoff_acquiring/wrappers/data/payment_status.dart';
 import 'package:tinkoff_acquiring/wrappers/data/product.dart';
 import 'package:tinkoff_acquiring/wrappers/data/user.dart';
 
@@ -33,6 +34,8 @@ class TinkoffAcquiring {
         terminalPassword == null) {
       return false;
     }
+    //костыль
+    if(_sdkInited) return _sdkInited;
     print('initSdk from dart');
     _sdkInited = await _channel.invokeMethod('initSdk', <String, dynamic>{
       'terminalKey': terminalKey,
@@ -78,7 +81,7 @@ class TinkoffAcquiring {
     return _pay(method, totalAmount);
   }
 
-  static _pay(PaymentMetod method, totalAmount) async {
+  static Future<PaymentStatus?> _pay(PaymentMetod method, totalAmount) async {
     final payResult = await _channel.invokeMethod('pay', <String, dynamic>{
       'customerEmail': _currentUser.email,
       'customerPhone': _currentUser.phone,
@@ -90,13 +93,14 @@ class TinkoffAcquiring {
     });
 
     print('payResult');
+    //TODO debug this
     print(payResult);
     if (defaultTargetPlatform == TargetPlatform.android)
       return checkAndroidPayResult(payResult);
     if (defaultTargetPlatform == TargetPlatform.iOS)
       return iosResponseDecode(payResult);
 
-    return payResult is String ? payResult : payResult.toString();
+   // return payResult is String ? payResult : payResult.toString();
   }
 }
 
