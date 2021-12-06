@@ -7,18 +7,19 @@ import 'package:tinkoff_acquiring/wrappers/data/payment_status.dart';
 PaymentStatus? iosResponseDecode(String result){
   //костыль
   //TODO return error from swift as JSON
-  if(!result.contains(code_success)) {
+  if(result.contains(code_success) || result.contains(code_success.toLowerCase())) {
+    print(jsonDecode(result.toString()));
+
+    final decoded = jsonDecode(result.toString());
+
+
+    final success = decoded[code_success];
+    final status = decoded[code_status];
+
+
+    return decodingMap[status];
+  }
+  else {
     return PaymentStatus.rejected;
   }
-
-  print(jsonDecode(result.toString()));
-
-  final decoded = jsonDecode(result.toString());
-
-
-  final success = decoded[code_success];
-  final status = decoded[code_status];
-
-
-  return decodingMap[status];
 }
