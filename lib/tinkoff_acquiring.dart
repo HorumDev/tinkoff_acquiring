@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:tinkoff_acquiring/widgets/android/payment_result.dart';
 import 'package:tinkoff_acquiring/widgets/ios/response_decode.dart';
 import 'package:tinkoff_acquiring/wrappers/data/coding_keys.dart';
+import 'package:tinkoff_acquiring/wrappers/data/payment_status.dart';
 import 'package:tinkoff_acquiring/wrappers/data/product.dart';
 import 'package:tinkoff_acquiring/wrappers/data/user.dart';
 
@@ -23,7 +24,6 @@ class TinkoffAcquiring {
     return version;
   }
 
-  // init tinkoff acq bibl
   static initSdk(
       {required String terminalKey,
       required String publicKey,
@@ -34,6 +34,8 @@ class TinkoffAcquiring {
         terminalPassword == null) {
       return false;
     }
+    //костыль
+    if(_sdkInited) return _sdkInited;
     print('initSdk from dart');
     _sdkInited = await _channel.invokeMethod('initSdk', <String, dynamic>{
       'terminalKey': terminalKey,
@@ -41,15 +43,14 @@ class TinkoffAcquiring {
       'terminalPassword': terminalPassword,
       'env': env.index
     });
-    print(_sdkInited);
     return _sdkInited;
   }
 
-  /*//TODO google pay
+  //TODO google pay
   static Future<bool> canUseAppleOrGooglePay() async {
     if (!_sdkInited) throw AssertionError('sdk not inited');
     return (await _channel.invokeMethod('canMakePayments')) as bool;
-  }*/
+  }
 
   // static Future googlePay(String token) async {
   //   //TODO catch error
@@ -80,24 +81,16 @@ class TinkoffAcquiring {
     return _pay(method, totalAmount);
   }
 
-  static _pay(PaymentMetod method, totalAmount) async {
-    var payResult = "";
-    try {
-      payResult = await _channel.invokeMethod('pay', <String, dynamic>{
-        'customerEmail': _currentUser.email,
-        'customerPhone': _currentUser.phone,
-        'customerKey': _currentUser.token,
-        code_amount: totalAmount,
-        'description': _currentUser.description,
-        'payMethod': method.index,
-        'merchant': _currentUser.merchant
-      });
-    } on PlatformException catch (err) {
-      print('handle error $err');
-    } catch (err) {
-      print('handle1 error');
-      // other types of Exceptions
-    }
+  static Future<PaymentStatus?> _pay(PaymentMetod method, totalAmount) async {
+    final payResult = await _channel.invokeMethod('pay', <String, dynamic>{
+      'customerEmail': _currentUser.email,
+      'customerPhone': _currentUser.phone,
+      'customerKey': _currentUser.token,
+      code_amount: totalAmount,
+      'description': _currentUser.description,
+      'payMethod': method.index,
+      'merchant': _currentUser.merchant
+    });
 
     print('payResult');
     print(payResult);
@@ -106,7 +99,7 @@ class TinkoffAcquiring {
     if (defaultTargetPlatform == TargetPlatform.iOS)
       return iosResponseDecode(payResult);
 
-    return payResult is String ? payResult : payResult.toString();
+   // return payResult is String ? payResult : payResult.toString();
   }
 
   static Future<bool> canUseAppleOrGooglePay(PaymentMetod method) async {
