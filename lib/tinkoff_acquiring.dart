@@ -16,13 +16,14 @@ class TinkoffAcquiring {
 
   static Stream? paymentProcessStream;
 
-  static const MethodChannel _channel = MethodChannel('tinkoff_acquiring');
+  static const MethodChannel _channel = MethodChannel('tinkoff_acquiring'); // установка связи с нативкой
 
   static Future<String?> get platformVersion async {
     final String? version = await _channel.invokeMethod('getPlatformVersion');
     return version;
   }
 
+  // init tinkoff acq bibl
   static initSdk(
       {required String terminalKey,
       required String publicKey,
@@ -40,14 +41,15 @@ class TinkoffAcquiring {
       'terminalPassword': terminalPassword,
       'env': env.index
     });
+    print(_sdkInited);
     return _sdkInited;
   }
 
-  //TODO google pay
+  /*//TODO google pay
   static Future<bool> canUseAppleOrGooglePay() async {
     if (!_sdkInited) throw AssertionError('sdk not inited');
     return (await _channel.invokeMethod('canMakePayments')) as bool;
-  }
+  }*/
 
   // static Future googlePay(String token) async {
   //   //TODO catch error
@@ -79,15 +81,23 @@ class TinkoffAcquiring {
   }
 
   static _pay(PaymentMetod method, totalAmount) async {
-    final payResult = await _channel.invokeMethod('pay', <String, dynamic>{
-      'customerEmail': _currentUser.email,
-      'customerPhone': _currentUser.phone,
-      'customerKey': _currentUser.token,
-      code_amount: totalAmount,
-      'description': _currentUser.description,
-      'payMethod': method.index,
-      'merchant': _currentUser.merchant
-    });
+    var payResult = "";
+    try {
+      payResult = await _channel.invokeMethod('pay', <String, dynamic>{
+        'customerEmail': _currentUser.email,
+        'customerPhone': _currentUser.phone,
+        'customerKey': _currentUser.token,
+        code_amount: totalAmount,
+        'description': _currentUser.description,
+        'payMethod': method.index,
+        'merchant': _currentUser.merchant
+      });
+    } on PlatformException catch (err) {
+      print('handle error $err');
+    } catch (err) {
+      print('handle1 error');
+      // other types of Exceptions
+    }
 
     print('payResult');
     print(payResult);
@@ -97,6 +107,25 @@ class TinkoffAcquiring {
       return iosResponseDecode(payResult);
 
     return payResult is String ? payResult : payResult.toString();
+  }
+
+  static Future<bool> canUseAppleOrGooglePay(PaymentMetod method) async {
+    //TODO catch errors
+    //if (defaultTargetPlatform == TargetPlatform.android) return false;
+    if (!_sdkInited) throw AssertionError('sdk not inited');
+    if (_currentUser == null) throw AssertionError('user not inited');
+
+
+    return _checkGooglePay(method);
+  }
+
+  static _checkGooglePay(PaymentMetod method) async {
+    final bool resultAvailability = await _channel.invokeMethod('checkGooglePay', <String, dynamic>{});
+
+    print('resultAvailability');
+    print(resultAvailability);
+
+    return resultAvailability;
   }
 }
 
