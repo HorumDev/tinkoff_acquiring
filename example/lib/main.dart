@@ -141,7 +141,7 @@ class _MyAppState extends State<MyApp> {
                     email: 'example.com',
                     description: 'description', // chernybro NPE
                     phone: '+79217483843');
-                TinkoffAcquiring.canUseAppleOrGooglePay(PaymentMetod.googlePay);
+                TinkoffAcquiring.canUseAppleOrGooglePay();
               },
               child: const Text('check GooglePay'))),
         ]),

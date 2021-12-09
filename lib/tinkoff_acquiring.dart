@@ -82,15 +82,23 @@ class TinkoffAcquiring {
   }
 
   static Future<PaymentStatus?> _pay(PaymentMetod method, totalAmount) async {
-    final payResult = await _channel.invokeMethod('pay', <String, dynamic>{
-      'customerEmail': _currentUser.email,
-      'customerPhone': _currentUser.phone,
-      'customerKey': _currentUser.token,
-      code_amount: totalAmount,
-      'description': _currentUser.description,
-      'payMethod': method.index,
-      'merchant': _currentUser.merchant
-    });
+    var payResult = "";
+    try {
+      payResult = await _channel.invokeMethod('pay', <String, dynamic>{
+        'customerEmail': _currentUser.email,
+        'customerPhone': _currentUser.phone,
+        'customerKey': _currentUser.token,
+        code_amount: totalAmount,
+        'description': _currentUser.description,
+        'payMethod': method.index,
+        'merchant': _currentUser.merchant
+      });
+    } on PlatformException catch (err) {
+      print('handle error $err');
+    } catch (err) {
+      print('handle1 error');
+      // other types of Exceptions
+    }
 
     print('payResult');
     print(payResult);
@@ -102,24 +110,24 @@ class TinkoffAcquiring {
    // return payResult is String ? payResult : payResult.toString();
   }
 
-  static Future<bool> canUseAppleOrGooglePay(PaymentMetod method) async {
-    //TODO catch errors
-    //if (defaultTargetPlatform == TargetPlatform.android) return false;
-    if (!_sdkInited) throw AssertionError('sdk not inited');
-    if (_currentUser == null) throw AssertionError('user not inited');
-
-
-    return _checkGooglePay(method);
-  }
-
-  static _checkGooglePay(PaymentMetod method) async {
-    final bool resultAvailability = await _channel.invokeMethod('checkGooglePay', <String, dynamic>{});
-
-    print('resultAvailability');
-    print(resultAvailability);
-
-    return resultAvailability;
-  }
+  // static Future<bool> canUseAppleOrGooglePay(PaymentMetod method) async {
+  //   //TODO catch errors
+  //   //if (defaultTargetPlatform == TargetPlatform.android) return false;
+  //   if (!_sdkInited) throw AssertionError('sdk not inited');
+  //   if (_currentUser == null) throw AssertionError('user not inited');
+  //
+  //
+  //   return _checkGooglePay(method);
+  // }
+  //
+  // static _checkGooglePay(PaymentMetod method) async {
+  //   final bool resultAvailability = await _channel.invokeMethod('checkGooglePay', <String, dynamic>{});
+  //
+  //   print('resultAvailability');
+  //   print(resultAvailability);
+  //
+  //   return resultAvailability;
+  // }
 }
 
 enum PaymentMetod { applePay, googlePay, card }

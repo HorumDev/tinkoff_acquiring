@@ -135,7 +135,7 @@ class TinkoffAcquiringPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 android.util.Log.d("APP_TAG", "onMethodCall: tinkoffAcquiring = $tinkoffAcquiring")
                 result.success(true)
             }
-            "checkGooglePay" -> {
+            "canMakePayments" -> {
                 //onGooglePayReady - коллбек, оповещающий о доступности Google Pay на устройстве
                 val googlePayHelper = GooglePayHelper(googleParams)
                 googlePayHelper.initGooglePay(applicationContext) { onGooglePayReady ->
