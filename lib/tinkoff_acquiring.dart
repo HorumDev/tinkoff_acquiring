@@ -95,7 +95,7 @@ class TinkoffAcquiring {
         'description': _currentUser.description,
         'payMethod': method.index,
         'merchant': _currentUser.merchant,
-        'orderId': _currentUser.merchant,
+        'orderId': _currentUser.orderId,
       });
     } on PlatformException catch (err) {
       print('handle error $err');
