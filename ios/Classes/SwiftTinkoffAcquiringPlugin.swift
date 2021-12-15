@@ -48,8 +48,13 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
                 customerKey = params["customerKey"] as! String
                 
                 print(params["payMethod"])
+
+                 var orderId = String(Int64(arc4random()))
+                 if(params["orderId"] != nil){
+                 orderId = params["orderId"] as! String
+                 }
                 
-                var paymentData = createPaymentData()
+                var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount ?? 0), orderId: orderId, customerKey: customerKey)
                 
                 paymentData.description = params["description"] as? String
                 
@@ -122,34 +127,34 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
     
     
     
-    
-    private func createPaymentData() -> PaymentInitData {
-        //  let amount = productsAmount()
-        let randomOrderId = String(Int64(arc4random()))
-        var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount ?? 0), orderId: randomOrderId, customerKey: customerKey)
-        
-        
-        //          var receiptItems: [Item] = []
-        //          products.forEach { product in
-        //              let item = Item(amount: product.price.int64Value * 100,
-        //                              price: product.price.int64Value * 100,
-        //                              name: product.name,
-        //                              tax: .vat10)
-        //              receiptItems.append(item)
-        //          }
-        //
-        //          paymentData.receipt = Receipt(shopCode: nil,
-        //                                        email: customerEmail,
-        //                                        taxation: .osn,
-        //                                        phone: customerPhone,
-        //                                        items: receiptItems,
-        //                                        agentData: nil,
-        //                                        supplierInfo: nil,
-        //                                        customer: nil,
-        //                                        customerInn: nil)
-        
-        return paymentData
-    }
+//
+//     private func createPaymentData() -> PaymentInitData {
+//         //  let amount = productsAmount()
+//         let randomOrderId = String(Int64(arc4random()))
+//         var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount ?? 0), orderId: randomOrderId, customerKey: customerKey)
+//
+//
+//         //          var receiptItems: [Item] = []
+//         //          products.forEach { product in
+//         //              let item = Item(amount: product.price.int64Value * 100,
+//         //                              price: product.price.int64Value * 100,
+//         //                              name: product.name,
+//         //                              tax: .vat10)
+//         //              receiptItems.append(item)
+//         //          }
+//         //
+//         //          paymentData.receipt = Receipt(shopCode: nil,
+//         //                                        email: customerEmail,
+//         //                                        taxation: .osn,
+//         //                                        phone: customerPhone,
+//         //                                        items: receiptItems,
+//         //                                        agentData: nil,
+//         //                                        supplierInfo: nil,
+//         //                                        customer: nil,
+//         //                                        customerInn: nil)
+//
+//         return paymentData
+//     }
     
     
     private func responseReviewing(_ response: Result<PaymentStatusResponse, Error>,_ flutterResult: @escaping FlutterResult) {

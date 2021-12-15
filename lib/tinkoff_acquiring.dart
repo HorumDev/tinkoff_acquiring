@@ -17,7 +17,8 @@ class TinkoffAcquiring {
 
   static Stream? paymentProcessStream;
 
-  static const MethodChannel _channel = MethodChannel('tinkoff_acquiring'); // установка связи с нативкой
+  static const MethodChannel _channel =
+      MethodChannel('tinkoff_acquiring'); // установка связи с нативкой
 
   static Future<String?> get platformVersion async {
     final String? version = await _channel.invokeMethod('getPlatformVersion');
@@ -35,7 +36,7 @@ class TinkoffAcquiring {
       return false;
     }
     //костыль
-    if(_sdkInited) return _sdkInited;
+    if (_sdkInited) return _sdkInited;
     print('initSdk from dart');
     _sdkInited = await _channel.invokeMethod('initSdk', <String, dynamic>{
       'terminalKey': terminalKey,
@@ -65,7 +66,8 @@ class TinkoffAcquiring {
 
   static set updateUser(User user) => _currentUser = user;
 
-  static Future pay(double totalAmount, PaymentMetod method) async {
+  static Future pay(
+      double totalAmount, PaymentMetod method, String orderId) async {
     //TODO catch errors
     //if (defaultTargetPlatform == TargetPlatform.android) return false;
     if (!_sdkInited) throw AssertionError('sdk not inited');
@@ -78,10 +80,11 @@ class TinkoffAcquiring {
     //   totalAmount += p.price * p.amount;
     // }
 
-    return _pay(method, totalAmount);
+    return _pay(method, totalAmount, orderId);
   }
 
-  static Future<PaymentStatus?> _pay(PaymentMetod method, totalAmount) async {
+  static Future<PaymentStatus?> _pay(
+      PaymentMetod method, totalAmount, String orderId) async {
     var payResult = "";
     try {
       payResult = await _channel.invokeMethod('pay', <String, dynamic>{
@@ -91,7 +94,8 @@ class TinkoffAcquiring {
         code_amount: totalAmount,
         'description': _currentUser.description,
         'payMethod': method.index,
-        'merchant': _currentUser.merchant
+        'merchant': _currentUser.merchant,
+        'orderId': _currentUser.merchant,
       });
     } on PlatformException catch (err) {
       print('handle error $err');
@@ -107,27 +111,27 @@ class TinkoffAcquiring {
     if (defaultTargetPlatform == TargetPlatform.iOS)
       return iosResponseDecode(payResult);
 
-   // return payResult is String ? payResult : payResult.toString();
+    // return payResult is String ? payResult : payResult.toString();
   }
 
-  // static Future<bool> canUseAppleOrGooglePay(PaymentMetod method) async {
-  //   //TODO catch errors
-  //   //if (defaultTargetPlatform == TargetPlatform.android) return false;
-  //   if (!_sdkInited) throw AssertionError('sdk not inited');
-  //   if (_currentUser == null) throw AssertionError('user not inited');
-  //
-  //
-  //   return _checkGooglePay(method);
-  // }
-  //
-  // static _checkGooglePay(PaymentMetod method) async {
-  //   final bool resultAvailability = await _channel.invokeMethod('checkGooglePay', <String, dynamic>{});
-  //
-  //   print('resultAvailability');
-  //   print(resultAvailability);
-  //
-  //   return resultAvailability;
-  // }
+// static Future<bool> canUseAppleOrGooglePay(PaymentMetod method) async {
+//   //TODO catch errors
+//   //if (defaultTargetPlatform == TargetPlatform.android) return false;
+//   if (!_sdkInited) throw AssertionError('sdk not inited');
+//   if (_currentUser == null) throw AssertionError('user not inited');
+//
+//
+//   return _checkGooglePay(method);
+// }
+//
+// static _checkGooglePay(PaymentMetod method) async {
+//   final bool resultAvailability = await _channel.invokeMethod('checkGooglePay', <String, dynamic>{});
+//
+//   print('resultAvailability');
+//   print(resultAvailability);
+//
+//   return resultAvailability;
+// }
 }
 
 enum PaymentMetod { applePay, googlePay, card }

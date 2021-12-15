@@ -148,7 +148,7 @@ class TinkoffAcquiringPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 android.util.Log.d("APP_TAG", "onMethodCall: amount = ${Money.ofRubles(params["Amount"] as Double)}")
                 currentPaymentOptions = PaymentOptions().setOptions {
                     orderOptions { // данные заказа
-                        orderId = "ORDER-ID3"
+                        orderId = params["orderId"] as String
                         amount = Money.ofRubles(params["Amount"] as Double) /// Check
                         //title = "Оплата"
                         description = params["description"] as String
