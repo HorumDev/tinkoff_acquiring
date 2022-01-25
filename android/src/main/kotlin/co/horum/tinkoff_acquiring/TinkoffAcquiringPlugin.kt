@@ -308,7 +308,8 @@ class TinkoffAcquiringPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     "APP_TAG",
                     "success: EXTRA_PAYMENT_ID = ${paymentId}, EXTRA_CARD_ID = $cardId"
                 )
-                globalResult.success("{\"paymentId\": $paymentId,\"cardId\": $cardId}")
+                //globalResult.success("{\"paymentId\": $paymentId,\"cardId\": $cardId}")
+                globalResult.success("success")
             }
             Activity.RESULT_CANCELED -> globalResult.success("cancelled")
             RESULT_ERROR -> {
