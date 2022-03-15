@@ -105,8 +105,7 @@ class TinkoffAcquiringPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     // Добавить проверку оплачивать google.pay
     // разобраться с ответами resulta (библ acquiring)
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-        AcquiringSdk.isDebug = true
-        AcquiringSdk.isDeveloperMode = true
+
         android.util.Log.d("APP_TAG", "onMethodCall: result = $result")
         globalResult = result
         when (call.method) {
@@ -117,7 +116,13 @@ class TinkoffAcquiringPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 android.util.Log.d("TAG", "onMethodCall: params = $params")
                 var env = WalletConstants.ENVIRONMENT_TEST
                 android.util.Log.d("TAG", "onMethodCall: env = $env")
-                if ((params["env"] as Int) == 1) env = WalletConstants.ENVIRONMENT_PRODUCTION
+                if ((params["env"] as Int) == 1) {
+                    env = WalletConstants.ENVIRONMENT_PRODUCTION
+                    AcquiringSdk.isDebug = true
+                    AcquiringSdk.isDeveloperMode = true
+                }
+
+
 
                 terminalKey = params["terminalKey"] as String
                 android.util.Log.d("APP_TAG", "onMethodCall: terminalKey = ${params["terminalKey"]}")

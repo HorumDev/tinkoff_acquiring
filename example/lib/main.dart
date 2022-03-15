@@ -92,7 +92,7 @@ class _MyAppState extends State<MyApp> {
                     description: 'description', // chernybro NPE
                     merchant: 'merchant.ru.mandarineda.mandarinapp.pay');
 
-                TinkoffAcquiring.pay(100.0, PaymentMetod.applePay).then((value) => showInfoDialog(context,value??""));
+                TinkoffAcquiring.pay(100.0, PaymentMetod.applePay, "fdf").then((value) => showInfoDialog(context,value??""));
               },
               child: const Text('pay apple pay'))),
         Builder(
@@ -104,7 +104,7 @@ class _MyAppState extends State<MyApp> {
                     description: 'description', // chernybro NPE
                     phone: '+79217483843');
 
-                TinkoffAcquiring.pay(101.0, PaymentMetod.card)
+                TinkoffAcquiring.pay(11.0, PaymentMetod.card, "3333")
                     .then((value) => showInfoDialog(context,value??""));
               },
               child: const Text('pay card'))),
@@ -117,7 +117,7 @@ class _MyAppState extends State<MyApp> {
                         description: 'description', // chernybro NPE
                         phone: '+79217483843');
 
-                    TinkoffAcquiring.pay(101.0, PaymentMetod.googlePay)
+                    TinkoffAcquiring.pay(101.0, PaymentMetod.googlePay, "212")
                         .then((value) => showInfoDialog(context,value??""));
                   },
                   child: const Text('pay google'))),
