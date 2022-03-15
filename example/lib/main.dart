@@ -86,10 +86,10 @@ class _MyAppState extends State<MyApp> {
             builder: (context) => ElevatedButton(
               onPressed: () {
                 TinkoffAcquiring.updateUser = User(
-                    token: 'fgergreg',
+                    token: '112332',
                     email: 'example.com',
                     phone: '+79217483843',
-                    description: 'description', // chernybro NPE
+                    description: 'description',
                     merchant: 'merchant.ru.mandarineda.mandarinapp.pay');
 
                 TinkoffAcquiring.pay(100.0, PaymentMetod.applePay, "fdf").then((value) => showInfoDialog(context,value??""));
@@ -99,9 +99,9 @@ class _MyAppState extends State<MyApp> {
             builder: (context) => ElevatedButton(
               onPressed: () {
                 TinkoffAcquiring.updateUser = User(
-                    token: 'fgergreg',
+                    token: '333',
                     email: 'example@gmail.com',
-                    description: 'description', // chernybro NPE
+                    description: 'description',
                     phone: '+79217483843');
 
                 TinkoffAcquiring.pay(11.0, PaymentMetod.card, "3333")
@@ -112,12 +112,12 @@ class _MyAppState extends State<MyApp> {
               builder: (context) => ElevatedButton(
                   onPressed: () {
                     TinkoffAcquiring.updateUser = User(
-                        token: 'fgergreg',
+                        token: '3232',
                         email: 'example@gmail.com',
-                        description: 'description', // chernybro NPE
+                        description: 'description',
                         phone: '+79217483843');
 
-                    TinkoffAcquiring.pay(101.0, PaymentMetod.googlePay, "212")
+                    TinkoffAcquiring.pay(11.0, PaymentMetod.googlePay, "212")
                         .then((value) => showInfoDialog(context,value??""));
                   },
                   child: const Text('pay google'))),
