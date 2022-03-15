@@ -96,6 +96,7 @@ class TinkoffAcquiring {
         'payMethod': method.index,
         'merchant': _currentUser.merchant,
         'orderId': orderId,
+        'notificationUrl': _currentUser.notificationUrl,
       });
     } on PlatformException catch (err) {
       print('handle error $err');

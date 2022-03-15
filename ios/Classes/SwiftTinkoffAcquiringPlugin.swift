@@ -39,7 +39,7 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
             result(sdk.canMakePaymentsApplePay(with: paymentApplePayConfiguration))
         case "pay":
             print("pay swift")
-            if(sdk.canMakePaymentsApplePay(with: paymentApplePayConfiguration)){
+           
                 let params = call.arguments as! [String: Any]
                 
                 amount=params["Amount"] as! Double
@@ -53,6 +53,8 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
                  if(params["orderId"] != nil){
                  orderId = params["orderId"] as! String
                  }
+                var viewConfig = AcquiringViewConfiguration()
+//                viewConfig.fields = [InfoFields.amount(title: params["description"] as? String, amount: amount as! String)]
                 
                 var paymentData = PaymentInitData(amount: NSDecimalNumber(value: amount ?? 0), orderId: orderId, customerKey: customerKey)
                 
@@ -60,16 +62,20 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
                 
                 switch params["payMethod"] as? NSNumber{
                 case 0:
+                    if(sdk.canMakePaymentsApplePay(with: paymentApplePayConfiguration)){
                     paymentApplePayConfiguration = AcquiringUISDK.ApplePayConfiguration()
                     paymentApplePayConfiguration.merchantIdentifier =   params["merchant"] as! String
                     sdk.presentPaymentApplePay(
                         on: UIApplication.shared.keyWindow!.rootViewController!,
                         paymentData: paymentData,
-                        viewConfiguration: AcquiringViewConfiguration(),
+                        viewConfiguration: viewConfig,
                         paymentConfiguration: paymentApplePayConfiguration)
                     {  response in
                         //result(response)
                         self.responseReviewing(response,result)
+                    }
+                    } else{
+                        result("ERROR")
                     }
                     
                 case 2:
@@ -80,7 +86,7 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
                     sdk.presentPaymentView(
                         on: UIApplication.shared.keyWindow!.rootViewController!,
                         paymentData: paymentData,
-                        configuration: AcquiringViewConfiguration()
+                        configuration: viewConfig
                     )
                     {  response in
                         //result(response)
@@ -89,10 +95,8 @@ public class SwiftTinkoffAcquiringPlugin: NSObject, FlutterPlugin {
                 default:
                     print("default")
                 }
-            }
-            else{
-                result("ERROR")
-            }
+            
+            
             
         case "initSdk":
             print("initSdk swift")
