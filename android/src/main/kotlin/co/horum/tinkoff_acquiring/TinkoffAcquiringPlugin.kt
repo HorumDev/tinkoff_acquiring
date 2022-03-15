@@ -118,6 +118,7 @@ class TinkoffAcquiringPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 android.util.Log.d("TAG", "onMethodCall: env = $env")
                 if ((params["env"] as Int) == 1) {
                     env = WalletConstants.ENVIRONMENT_PRODUCTION
+                } else {
                     AcquiringSdk.isDebug = true
                     AcquiringSdk.isDeveloperMode = true
                 }
