@@ -52,11 +52,11 @@ class TinkoffAcquiringPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onDetachedFromActivity() {
-        TODO("Not yet implemented")
+        print("onDetachedFromActivity called")
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        TODO("Not yet implemented")
+        print("onReattachedToActivityForConfigChanges called")
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
@@ -83,7 +83,7 @@ class TinkoffAcquiringPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
     override fun onDetachedFromActivityForConfigChanges() {
-        TODO("Not yet implemented")
+        print("onDetachedFromActivityForConfigChanges called")
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
