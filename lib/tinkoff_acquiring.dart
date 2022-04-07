@@ -68,6 +68,7 @@ class TinkoffAcquiring {
 
   static Future pay(
       double totalAmount, PaymentMetod method, String orderId) async {
+	  print('Принт для дебага - сразу после вызова pay');
     //TODO catch errors
     //if (defaultTargetPlatform == TargetPlatform.android) return false;
     if (!_sdkInited) throw AssertionError('sdk not inited');
@@ -79,14 +80,16 @@ class TinkoffAcquiring {
     // for (Product p in products) {
     //   totalAmount += p.price * p.amount;
     // }
-
+	print('Принт для дебага - перед вызовом _pay');
     return _pay(method, totalAmount, orderId);
   }
 
   static Future<PaymentStatus?> _pay(
       PaymentMetod method, totalAmount, String orderId) async {
+	  print('Принт для дебага - сразу после вызова _pay');
     var payResult = "";
     try {
+	  print('Принт для дебага - до вызова ченнел метода');
       payResult = await _channel.invokeMethod('pay', <String, dynamic>{
         'customerEmail': _currentUser.email,
         'customerPhone': _currentUser.phone,
@@ -98,13 +101,14 @@ class TinkoffAcquiring {
         'orderId': orderId,
         'notificationUrl': _currentUser.notificationUrl,
       });
+	  print('Принт для дебага - после вызова ченнел метода');
     } on PlatformException catch (err) {
       print('handle error $err');
     } catch (err) {
       print('handle1 error');
       // other types of Exceptions
     }
-
+	print('Принт для дебага - после трай энд кетч');
     print('payResult');
     print(payResult);
     if (defaultTargetPlatform == TargetPlatform.android)
